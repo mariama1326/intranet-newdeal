@@ -1,0 +1,37 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Scan sécurité avec Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ton_dockerhub_username/intranet-newdeal:latest
+
+  deploy:
+    runs-on: self-hosted
+    needs: scan
+
+    steps:
+      - name: Pull image depuis Docker Hub
+        run: docker pull ton_dockerhub_username/intranet-newdeal:latest
+
+      - name: Stop ancien conteneur
+        run: docker rm -f intranet || true
+
+      - name: Lancer nouveau conteneur
+        run: |
+          docker run -d \
+          --name intranet \
+          -p 80:80 \
+          ton_dockerhub_username/intranet-newdeal:latest
