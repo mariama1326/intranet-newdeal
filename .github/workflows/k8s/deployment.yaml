@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: intranet-newdeal
-          image: TON_DOCKERHUB_USERNAME/intranet-newdeal:1.0.0
+          image: maryamdiop/intranet-newdeal:1.0.0
           ports:
             - containerPort: 80
