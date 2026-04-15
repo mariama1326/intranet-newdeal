@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intranet-newdeal
+  labels:
+    app: intranet-newdeal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: intranet-newdeal
+  template:
+    metadata:
+      labels:
+        app: intranet-newdeal
+    spec:
+      containers:
+        - name: intranet-newdeal
+          image: TON_DOCKERHUB_USERNAME/intranet-newdeal:1.0.0
+          ports:
+            - containerPort: 80
