@@ -1,5 +1,5 @@
 # Use official Nginx image as base (for serving static content)
-FROM nginx:alpine
+(Get-Content Dockerfile) -replace 'FROM nginx:alpine', 'FROM nginx:alpine3.23' | Set-Content Dockerfile
 
 # Copy our app files into the default Nginx document root (/usr/share/nginx/html)
 COPY index.html /usr/share/nginx/html/
