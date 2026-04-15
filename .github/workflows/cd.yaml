@@ -39,7 +39,7 @@ jobs:
   # JOB 2 - DEPLOIEMENT
   # ===============================
   deploy:
-    runs-on: runner_prod
+    runs-on: self-hosted
     needs: scan
     steps:
       - name: Login Docker Hub
