@@ -1,4 +1,4 @@
-name: CD Pipeline
+name: CD Pipeline PROD
 
 on:
   push:
@@ -10,30 +10,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Scan sécurité avec Trivy
-  uses: aquasecurity/trivy-action@master
-  with:
-    image-ref: ton_username/intranet-newdeal:latest
-    severity: CRITICAL
-    exit-code: 1  
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ton_username/intranet-newdeal:latest
+          severity: CRITICAL
+          exit-code: 1
 
   deploy:
     runs-on: self-hosted
     needs: scan
 
     steps:
-      - name: Pull image depuis Docker Hub
-        run: docker pull ton_dockerhub_username/intranet-newdeal:latest
+      - name: Pull image
+        run: docker pull ton_username/intranet-newdeal:latest
 
       - name: Stop ancien conteneur
         run: docker rm -f intranet || true
 
-      - name: Lancer nouveau conteneur
-        run: |
-          docker run -d \
-          --name intranet \
-          -p 80:80 \
-          ton_dockerhub_username/intranet-newdeal:latest
+      - name: Lancer conteneur (port 80)
+        run: docker run -d -p 80:80 --name intranet ton_username/intranet-newdeal:latest
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Envoyer email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ton_email@gmail.com
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Déploiement PROD réussi"
+          body: "Le pipeline CD a été exécuté avec succès."
+          to: destinataire@gmail.com
+          from: ton_email@gmail.com
